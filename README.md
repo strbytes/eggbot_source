@@ -6,5 +6,5 @@ on a small chance when someone typed a word like 'guy' or 'brother'. I tried
 to expand it to be gender-inclusive and think I forgot to test the regexes because
 it hasn't done that in a while. Since then I've added a trigger for it to insult 
 users on a small chance by taking the longest word in a message and replying with 
-"You're a <word>!". It also now prints ASCII wizards when '!wizard' is called.
+"You're a (word)!". It also now prints ASCII wizards when '!wizard' is called.
 Important stuff.
