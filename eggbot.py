@@ -21,6 +21,8 @@ class MyClient(discord.Client):
         if 'egg' in message.content.lower():
             print('Egg reaction!')
             await message.add_reaction('🥚')
+        # None of the bench responses have triggered in a while, I think the
+        # regexes might be broken
         if bench_regex_m.match(message.content) and random.random() > .9:
             print('Bench response!')
             await message.reply('How much does he bench?')
