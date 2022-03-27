@@ -23,21 +23,22 @@ class MyClient(discord.Client):
             await message.add_reaction('🥚')
         # None of the bench responses have triggered in a while, I think the
         # regexes might be broken
-        if bench_regex_m.match(message.content) and random.random() > .9:
+        if bench_regex_m.match(message.content) and random.random() > .75:
             print('Bench response!')
             await message.reply('How much does he bench?')
-        if bench_regex_f.match(message.content) and random.random() > .9:
+        if bench_regex_f.match(message.content) and random.random() > .75:
             print('Bench response!')
             await message.reply('How much does she bench?')
-        if bench_regex_n.match(message.content) and random.random() > .9:
+        if bench_regex_n.match(message.content) and random.random() > .75:
             print('Bench response!')
             await message.reply('How much do they bench?')
         if message.content == '!facts':
             print('Egg facts!')
             await message.reply(random.choice(egg_facts))
         if message.content == '!wizard':
+            print('Wizard!')
             await message.reply('```' + random.choice(wizards) + '```')
-        # pick out the longest word from a message on a .01 chanche and then say "you're a [word]"
+        # pick out the longest word from a message on a .01 chance and then say "you're a [word]"
         if random.random() < .005 or insult_trigger.findall(message.content):
             words = word_regex.findall(message.content)
             longest = ''
