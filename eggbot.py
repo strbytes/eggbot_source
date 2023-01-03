@@ -1,4 +1,7 @@
-import discord, re, random
+import discord, os, re, random
+from dotenv import load_dotenv
+
+load_dotenv()
 
 bench_regex_m = re.compile(r'\W(dad|brother|guy|man|boyfriend)\W') # removed ^.*? from beginning and
 bench_regex_f = re.compile(r'\W(mom|sister|girl|woman|girlfriend)\W') # added \Ws at beginning and end
@@ -61,4 +64,4 @@ class MyClient(discord.Client):
 
 
 client = MyClient()
-client.run('Token goes here')
+client.run(os.environ.get('DISCORD_API_KEY'))
