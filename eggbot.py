@@ -50,12 +50,12 @@ class MyClient(discord.Client):
                 await message.reply(f"You're an {longest.lower()}!")
             else:
                 await message.reply(f"You're a {longest.lower()}!")
-        if message.content[:4] == '!kg':
-            lb = message.content[5:]
+        if message.content[:3] == '!kg':
+            lb = message.content[4:]
             kg = round(float(lb) / 2.2046226218, 2)
-            await message.reply(f'{int(lb)} pounds is equal to {kg} kilograms')
-        if message.content[:4] == '!lb':
-            kg = message.content[5:]
+            await message.reply(f'{lb} pounds is equal to {kg} kilograms')
+        if message.content[:3] == '!lb':
+            kg = message.content[4:]
             lb = round(float(kg) * 2.2046226218, 2)
             await message.reply(f'{kg} kilograms is equal to {lb} pounds')
 
