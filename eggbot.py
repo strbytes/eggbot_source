@@ -32,38 +32,40 @@ async def on_message(message):
     if message.author == eggbot.user:
         return
     if "egg" in message.content.lower():
-        print("Egg reaction!")
         await message.add_reaction("🥚")
+        print("Egg reaction!")
     if random.random() < 0.005:
         await insult(message)
-
+        print("You're a word!")
+    await eggbot.process_commands(message)
 
 async def insult(message):
     words = word_regex.findall(message.content)
     longest = max(words, key=len)
-    print("You're a word!")
     if longest[0].lower() in "aeiou":
         await message.reply(f"You're an {longest.lower()}!")
     else:
         await message.reply(f"You're a {longest.lower()}!")
 
 
-@eggbot.command(aliases={"kg", "kgs"})
-def kg(context, lb):
+@eggbot.command(aliases=["kgs"])
+async def kg(ctx, lb):
     try:
         kg = round(float(lb) / 2.2046226218, 2)
-        await message.reply(f"{lb} pounds is equal to {kg} kilograms")
+        await ctx.send(f"{lb} pounds is equal to {kg} kilograms")
     except:
-        await context.send(f"I'm sorry {context.author}. I can't do that {context.author}.")
+        await ctx.send(f"I'm sorry {ctx.author}. I can't do that {ctx.author}.")
+    print("lb -> kg")
 
 
-@eggbot.command(aliases={"lb", "lbs"})
-def lb(context, lb):
+@eggbot.command(aliases=["lbs"])
+async def lb(ctx, kg):
     try:
-        kg = round(float(lb) / 2.2046226218, 2)
-        await message.reply(f"{lb} pounds is equal to {kg} kilograms")
+        lb = round(float(kg) * 2.2046226218, 2)
+        await ctx.send(f"{kg} kilograms is equal to {lb} pounds")
     except:
-        await context.send(f"I'm sorry {context.author}. I can't do that {context.author}.")
+        await ctx.send(f"I'm sorry {ctx.author}. I can't do that {ctx.author}.")
+    print("kg -> lb")
 
 
 class MyClient(discord.Client):
