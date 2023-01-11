@@ -4,13 +4,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-bench_regex_m = re.compile(
-    r"\W(dad|brother|guy|man|boyfriend)\W"
-)  # removed ^.*? from beginning and
-bench_regex_f = re.compile(
-    r"\W(mom|sister|girl|woman|girlfriend)\W"
-)  # added \Ws at beginning and end
-bench_regex_n = re.compile(r"\W(friend|boss|roommate|girlfriends|boyfriends)\W")
 word_regex = re.compile(r"\w+")
 insult_trigger = re.compile(r"\!insult$")
 
@@ -38,6 +31,7 @@ async def on_message(message):
         await insult(message)
         print("You're a word!")
     await eggbot.process_commands(message)
+
 
 async def insult(message):
     words = word_regex.findall(message.content)
@@ -68,26 +62,16 @@ async def lb(ctx, kg):
     print("kg -> lb")
 
 
-class MyClient(discord.Client):
-    async def on_message(self, message):
-        # None of the bench responses have triggered in a while, I think the
-        # regexes might be broken
-        if bench_regex_m.match(message.content) and random.random() > 0.75:
-            print("Bench response!")
-            await message.reply("How much does he bench?")
-        if bench_regex_f.match(message.content) and random.random() > 0.75:
-            print("Bench response!")
-            await message.reply("How much does she bench?")
-        if bench_regex_n.match(message.content) and random.random() > 0.75:
-            print("Bench response!")
-            await message.reply("How much do they bench?")
+@eggbot.command(aliases=["facts"])
+async def fact(ctx):
+    await ctx.send(random.choice(egg_facts))
+    print("Egg facts!")
 
-        if message.content == "!facts":
-            print("Egg facts!")
-            await message.reply(random.choice(egg_facts))
-        if message.content == "!wizard":
-            print("Wizard!")
-            await message.reply("```" + random.choice(wizards) + "```")
+
+@eggbot.command(aliases=["wizards"])
+async def wizard(ctx):
+    await ctx.send(f"```{random.choice(wizards)}```")
+    print("Wizard!")
 
 
 # client = MyClient()
