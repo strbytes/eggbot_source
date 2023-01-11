@@ -21,17 +21,35 @@ with open("wizards.txt") as f:
 
 eggbot = commands.Bot(command_prefix="!")
 
+
 @eggbot.event
 async def on_ready():
     print(f"Logged on as {eggbot.user}!")
 
+
+@eggbot.event
+async def on_message(message):
+    if message.author == eggbot.user:
+        return
+    if "egg" in message.content.lower():
+        print("Egg reaction!")
+        await message.add_reaction("🥚")
+    if random.random() < 0.005:
+        await insult(message)
+
+
+async def insult(message):
+    words = word_regex.findall(message.content)
+    longest = max(words, key=len)
+    print("You're a word!")
+    if longest[0].lower() in "aeiou":
+        await message.reply(f"You're an {longest.lower()}!")
+    else:
+        await message.reply(f"You're a {longest.lower()}!")
+
+
 class MyClient(discord.Client):
     async def on_message(self, message):
-        if message.author == client.user:
-            return
-        if "egg" in message.content.lower():
-            print("Egg reaction!")
-            await message.add_reaction("🥚")
         # None of the bench responses have triggered in a while, I think the
         # regexes might be broken
         if bench_regex_m.match(message.content) and random.random() > 0.75:
@@ -51,17 +69,6 @@ class MyClient(discord.Client):
             await message.reply("```" + random.choice(wizards) + "```")
         # pick out the longest word from a message on a .01 chance and then say
         # "you're a [word]"
-        if random.random() < 0.005 or insult_trigger.findall(message.content):
-            words = word_regex.findall(message.content)
-            longest = ""
-            for word in words:
-                if len(word) > len(longest):
-                    longest = word
-            print("You're a word!")
-            if longest[0].lower() in "aeiou":
-                await message.reply(f"You're an {longest.lower()}!")
-            else:
-                await message.reply(f"You're a {longest.lower()}!")
         if message.content[:3] == "!kg":
             lb = message.content[4:]
             kg = round(float(lb) / 2.2046226218, 2)
