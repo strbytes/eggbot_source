@@ -48,6 +48,24 @@ async def insult(message):
         await message.reply(f"You're a {longest.lower()}!")
 
 
+@eggbot.command(aliases={"kg", "kgs"})
+def kg(context, lb):
+    try:
+        kg = round(float(lb) / 2.2046226218, 2)
+        await message.reply(f"{lb} pounds is equal to {kg} kilograms")
+    except:
+        await context.send(f"I'm sorry {context.author}. I can't do that {context.author}.")
+
+
+@eggbot.command(aliases={"lb", "lbs"})
+def lb(context, lb):
+    try:
+        kg = round(float(lb) / 2.2046226218, 2)
+        await message.reply(f"{lb} pounds is equal to {kg} kilograms")
+    except:
+        await context.send(f"I'm sorry {context.author}. I can't do that {context.author}.")
+
+
 class MyClient(discord.Client):
     async def on_message(self, message):
         # None of the bench responses have triggered in a while, I think the
@@ -61,22 +79,13 @@ class MyClient(discord.Client):
         if bench_regex_n.match(message.content) and random.random() > 0.75:
             print("Bench response!")
             await message.reply("How much do they bench?")
+
         if message.content == "!facts":
             print("Egg facts!")
             await message.reply(random.choice(egg_facts))
         if message.content == "!wizard":
             print("Wizard!")
             await message.reply("```" + random.choice(wizards) + "```")
-        # pick out the longest word from a message on a .01 chance and then say
-        # "you're a [word]"
-        if message.content[:3] == "!kg":
-            lb = message.content[4:]
-            kg = round(float(lb) / 2.2046226218, 2)
-            await message.reply(f"{lb} pounds is equal to {kg} kilograms")
-        if message.content[:3] == "!lb":
-            kg = message.content[4:]
-            lb = round(float(kg) * 2.2046226218, 2)
-            await message.reply(f"{kg} kilograms is equal to {lb} pounds")
 
 
 # client = MyClient()
