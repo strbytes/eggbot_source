@@ -1,4 +1,5 @@
 import discord, os, re, random
+from discord.ext import commands
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -18,11 +19,13 @@ with open("eggfacts.txt") as f:
 with open("wizards.txt") as f:
     wizards = [wizard for wizard in f.read().split("\n\n")]
 
+eggbot = commands.Bot(command_prefix="!")
+
+@eggbot.event
+async def on_ready():
+    print(f"Logged on as {eggbot.user}!")
 
 class MyClient(discord.Client):
-    async def on_ready(self):
-        print("Logged on as {0}!".format(self.user))
-
     async def on_message(self, message):
         if message.author == client.user:
             return
@@ -69,5 +72,5 @@ class MyClient(discord.Client):
             await message.reply(f"{kg} kilograms is equal to {lb} pounds")
 
 
-client = MyClient()
-client.run(os.environ.get("DISCORD_API_KEY"))
+# client = MyClient()
+eggbot.run(os.environ.get("DISCORD_API_KEY"))
