@@ -48,7 +48,7 @@ async def kg(ctx, lb):
         kg = round(float(lb) / 2.2046226218, 2)
         await ctx.send(f"{lb} pounds is equal to {kg} kilograms")
     except:
-        await ctx.send(f"I'm sorry {ctx.author}. I can't do that {ctx.author}.")
+        await ctx.send("Format is `!kg <lbs>`, where lbs is a valid number.")
     print("lb -> kg")
 
 
@@ -58,7 +58,7 @@ async def lb(ctx, kg):
         lb = round(float(kg) * 2.2046226218, 2)
         await ctx.send(f"{kg} kilograms is equal to {lb} pounds")
     except:
-        await ctx.send(f"I'm sorry {ctx.author}. I can't do that {ctx.author}.")
+        await ctx.send("Format is `!lb <kgs>`, where kgs is a valid number.")
     print("kg -> lb")
 
 
