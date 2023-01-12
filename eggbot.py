@@ -93,6 +93,8 @@ async def ban(ctx, *args):
             f"{user.nick} has been banned! {user.nick} has been banned {bans} time(s)."
         )
 
+    print("Ban!")
+
 
 if __name__ == "__main__":
     cursor.execute(
