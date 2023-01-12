@@ -1,8 +1,11 @@
-import discord, os, re, random
+import os, re, random, sqlite3
 from discord.ext import commands
 from dotenv import load_dotenv
 
 load_dotenv()
+
+db = sqlite3.connect("db.sqlite")
+cursor = db.cursor()
 
 word_regex = re.compile(r"\w+")
 insult_trigger = re.compile(r"\!insult$")
@@ -74,5 +77,31 @@ async def wizard(ctx):
     print("Wizard!")
 
 
-# client = MyClient()
-eggbot.run(os.environ.get("DISCORD_API_KEY"))
+@eggbot.command()
+async def ban(ctx, *args):
+    to_ban = ctx.message.mentions
+
+    for user in to_ban:
+        cursor.execute("SELECT bans FROM banned WHERE id = ?", [str(user.id)])
+        bans = ban_data[0] + 1 if (ban_data := cursor.fetchone()) else 1
+        cursor.execute(
+            """INSERT OR REPLACE INTO banned (id, bans) VALUES (?, ?);""",
+            [str(user.id), str(bans)],
+        )
+        db.commit()
+        await ctx.send(
+            f"{user.nick} has been banned! {user.nick} has been banned {bans} time(s)."
+        )
+
+
+if __name__ == "__main__":
+    cursor.execute(
+        """
+CREATE TABLE IF NOT EXISTS banned (
+    id integer PRIMARY KEY,
+    bans integer NOT NULL
+);
+        """
+    )
+
+    eggbot.run(os.environ.get("DISCORD_API_KEY"))
