@@ -1,4 +1,4 @@
-import os, re, random, sqlite3
+import os, re, random, sqlite3, hashlib
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -82,12 +82,18 @@ async def ban(ctx, *args):
     to_ban = ctx.message.mentions
 
     for user in to_ban:
-        cursor.execute("SELECT bans FROM banned WHERE id = ?", [str(user.id)])
+        # don't save real id, just hash it
+        id_hash = hashlib.sha1(str(user.id).encode())
+        # python's default hash called to produce a shorter number
+        id = hash(id_hash.hexdigest())
+
+        cursor.execute("SELECT bans FROM banned WHERE id = ?", [str(id)])
         bans = ban_data[0] + 1 if (ban_data := cursor.fetchone()) else 1
         cursor.execute(
             """INSERT OR REPLACE INTO banned (id, bans) VALUES (?, ?);""",
-            [str(user.id), str(bans)],
+            [str(id), str(bans)],
         )
+
         db.commit()
         await ctx.send(
             f"{user.nick} has been banned! {user.nick} has been banned {bans} time(s)."
