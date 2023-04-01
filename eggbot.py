@@ -80,7 +80,7 @@ async def fact(ctx):
 @eggbot.command()
 async def insult(ctx):
     if response := ctx.message.reference:
-        do_insult(response.resolved.content)
+        await do_insult(response.resolved)
 
 
 @eggbot.command(aliases=["wizards"])
