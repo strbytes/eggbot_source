@@ -96,7 +96,7 @@ async def ban(ctx, *args):
 
         db.commit()
         await ctx.send(
-            f"{user.nick} has been banned! {user.nick} has been banned {bans} time(s)."
+            f"{user.display_name} has been banned! {user.display_name} has been banned {bans} time(s)."
         )
 
     print("Ban!")
