@@ -80,6 +80,8 @@ async def wizard(ctx):
 @eggbot.command()
 async def ban(ctx, *args):
     to_ban = ctx.message.mentions
+    if not to_ban:
+        to_ban.append(ctx.message.author)
 
     for user in to_ban:
         # don't save real id, just hash it
