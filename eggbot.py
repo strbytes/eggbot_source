@@ -44,11 +44,13 @@ async def on_message(message):
 
 async def do_insult(message):
     words = word_regex.findall(message.content)
+    user = message.author
     longest = max(words, key=len)
     if longest[0].lower() in "aeiou":
-        await message.reply(f"You're an {longest.lower()}!")
+        await message.reply(f"You're an {longest.lower()}, @{user.display_name}!")
     else:
-        await message.reply(f"You're a {longest.lower()}!")
+        await message.reply(f"You're a {longest.lower()}, @{user.display_name}!")
+    print(f"{timestamp()} You're a word!")
 
 
 @eggbot.command(aliases=["kgs"])
