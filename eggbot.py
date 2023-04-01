@@ -11,8 +11,10 @@ cursor = db.cursor()
 word_regex = re.compile(r"\w+")
 insult_trigger = re.compile(r"\!insult$")
 
+
 def timestamp():
-    return datetime.strftime(datetime.now(), '%m/%d/%Y %H:%M:%S')
+    return datetime.strftime(datetime.now(), "%m/%d/%Y %H:%M:%S")
+
 
 with open("eggfacts.txt") as f:
     egg_facts = [fact for fact in f.read().strip().split("\n")]
