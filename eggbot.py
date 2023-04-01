@@ -1,4 +1,5 @@
 import os, re, random, sqlite3, hashlib
+from datetime import datetime
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -10,6 +11,9 @@ cursor = db.cursor()
 word_regex = re.compile(r"\w+")
 insult_trigger = re.compile(r"\!insult$")
 
+def timestamp():
+    return datetime.strftime(datetime.now(), '%m/%d/%Y %H:%M:%S')
+
 with open("eggfacts.txt") as f:
     egg_facts = [fact for fact in f.read().strip().split("\n")]
 with open("wizards.txt") as f:
@@ -20,7 +24,7 @@ eggbot = commands.Bot(command_prefix="!")
 
 @eggbot.event
 async def on_ready():
-    print(f"Logged on as {eggbot.user}!")
+    print(f"{timestamp()} Logged on as {eggbot.user}!")
 
 
 @eggbot.event
@@ -29,10 +33,10 @@ async def on_message(message):
         return
     if "egg" in message.content.lower():
         await message.add_reaction("🥚")
-        print("Egg reaction!")
+        print(f"{timestamp()} Egg reaction!")
     if random.random() < 0.005:
         await insult(message)
-        print("You're a word!")
+        print(f"{timestamp()} You're a word!")
     await eggbot.process_commands(message)
 
 
@@ -52,7 +56,7 @@ async def kg(ctx, lb):
         await ctx.send(f"{lb} pounds is equal to {kg} kilograms")
     except:
         await ctx.send("Format is `!kg <lbs>`, where lbs is a valid number.")
-    print("lb -> kg")
+    print(f"{timestamp()} lb -> kg")
 
 
 @eggbot.command(aliases=["lbs"])
@@ -62,19 +66,19 @@ async def lb(ctx, kg):
         await ctx.send(f"{kg} kilograms is equal to {lb} pounds")
     except:
         await ctx.send("Format is `!lb <kgs>`, where kgs is a valid number.")
-    print("kg -> lb")
+    print(f"{timestamp()} kg -> lb")
 
 
 @eggbot.command(aliases=["facts"])
 async def fact(ctx):
     await ctx.send(random.choice(egg_facts))
-    print("Egg facts!")
+    print(f"{timestamp()} Egg facts!")
 
 
 @eggbot.command(aliases=["wizards"])
 async def wizard(ctx):
     await ctx.send(f"```{random.choice(wizards)}```")
-    print("Wizard!")
+    print(f"{timestamp()} Wizard!")
 
 
 @eggbot.command()
@@ -101,7 +105,7 @@ async def ban(ctx, *args):
             f"{user.display_name} has been banned! {user.display_name} has been banned {bans} time(s)."
         )
 
-    print("Ban!")
+    print(f"{timestamp()} Ban!")
 
 
 if __name__ == "__main__":
