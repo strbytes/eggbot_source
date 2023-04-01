@@ -1,4 +1,4 @@
-import os, re, random, sqlite3, hashlib
+import os, random, sqlite3, hashlib
 from datetime import datetime
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -7,9 +7,6 @@ load_dotenv()
 
 db = sqlite3.connect("db.sqlite")
 cursor = db.cursor()
-
-word_regex = re.compile(r"\w+")
-insult_trigger = re.compile(r"\!insult$")
 
 
 def timestamp():
@@ -43,7 +40,7 @@ async def on_message(message):
 
 
 async def do_insult(message):
-    words = word_regex.findall(message.content)
+    words = message.content.split()
     user = message.author
     longest = max(words, key=len)
     if longest[0].lower() in "aeiou":
