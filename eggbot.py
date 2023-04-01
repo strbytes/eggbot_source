@@ -35,12 +35,12 @@ async def on_message(message):
         await message.add_reaction("🥚")
         print(f"{timestamp()} Egg reaction!")
     if random.random() < 0.005:
-        await insult(message)
+        await do_insult(message)
         print(f"{timestamp()} You're a word!")
     await eggbot.process_commands(message)
 
 
-async def insult(message):
+async def do_insult(message):
     words = word_regex.findall(message.content)
     longest = max(words, key=len)
     if longest[0].lower() in "aeiou":
@@ -73,6 +73,12 @@ async def lb(ctx, kg):
 async def fact(ctx):
     await ctx.send(random.choice(egg_facts))
     print(f"{timestamp()} Egg facts!")
+
+
+@eggbot.command()
+async def insult(ctx):
+    if response := ctx.message.reference:
+        do_insult(response.resolve.content)
 
 
 @eggbot.command(aliases=["wizards"])
