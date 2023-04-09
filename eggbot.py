@@ -84,7 +84,7 @@ async def insult(ctx):
 
 @eggbot.command(aliases=["wizards"])
 async def wizard(ctx):
-    await ctx.send(f"```{random.choice(wizards)}```")
+    await ctx.send("```Wizard!\n{random.choice(wizards)}```")
     print(f"{timestamp()} Wizard!")
 
 
