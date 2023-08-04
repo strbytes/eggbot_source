@@ -3,23 +3,25 @@ on:
   push:
     branches:
       - main
-# permissions:
-#   contents: write
+
 jobs:
   deployment:
-    # concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
     environment: VPS
     runs-on: ubuntu-latest
     steps:
-      # - name: Checkout 🛎️
-      #   uses: actions/checkout@v3
-
       - name: clone on VPS and restart bot
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
           key: ${{ secrets.KEY}}
           port: ${{ secrets.PORT }}
           script: |
-            whoami
+            cd /home/eve/eggbot_source
+            python3 -m venv .direnv
+            git fetch origin main
+            git reset --hard origin/main
+            cat pid | xargs kill
+            python3 eggbot.py &> log & echo $! > pid
+            exit
