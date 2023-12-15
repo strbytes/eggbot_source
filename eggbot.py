@@ -53,28 +53,47 @@ async def do_insult(message):
     print(f"{timestamp()} You're a word!")
 
 
-@eggbot.command(aliases=["kgs"])
-async def kg(ctx, lb):
-    try:
-        kg = round(float(lb) / 2.2046226218, 2)
-        await ctx.send(f"{lb} pounds is equal to {kg} kilograms")
-    except:
-        await ctx.send("Format is `!kg <lbs>`, where lbs is a valid number.")
+@eggbot.command()
+@commands.is_owner()
+async def sync(ctx):
+    await eggbot.tree.sync()
+    print(f"{timestamp()} Slash commands synced")
+
+
+@eggbot.tree.command(name="kg", description="Convert pounds to kilograms")
+async def lb_to_kg(interaction: discord.interactions.Interaction, lb: int):
+    # try:
+    kg = round(float(lb) / 2.2046226218, 2)
+    await interaction.response.send_message(f"{lb} pounds is equal to {kg} kilograms")
+    # except:
+    #     await interaction.response.send_message(
+    #         "Format is `!kg <lbs>`, where lbs is a valid number."
+    #     )
     print(f"{timestamp()} lb -> kg")
 
 
-@eggbot.command(aliases=["lbs"])
-async def lb(ctx, kg):
-    try:
-        lb = round(float(kg) * 2.2046226218, 2)
-        await ctx.send(f"{kg} kilograms is equal to {lb} pounds")
-    except:
-        await ctx.send("Format is `!lb <kgs>`, where kgs is a valid number.")
+@eggbot.tree.command(name="lb", description="Convert kilograms to pounds")
+async def kg_to_lb(interaction: discord.interactions.Interaction, kg: int):
+    # try:
+    lb = round(float(kg) * 2.2046226218, 2)
+    await interaction.response.send_message(f"{kg} kilograms is equal to {lb} pounds")
+    # except:
+    #     await interaction.response.send_message(
+    #         "Format is `!lb <kgs>`, where kgs is a valid number."
+    #     )
     print(f"{timestamp()} kg -> lb")
 
 
-@eggbot.command(aliases=["facts"])
+# @eggbot.tree.command(name="fact", description="Provide one (1) Egg Fact")
+# async def fact(interaction: discord.interactions.Interaction):
+#     # TODO - fuzzy find a fact based on a string?
+#     await interaction.response.send_message(random.choice(egg_facts))
+#     print(f"{timestamp()} Egg facts!")
+
+
+@eggbot.command()
 async def fact(ctx):
+    # TODO - fuzzy find a fact based on a string?
     await ctx.send(random.choice(egg_facts))
     print(f"{timestamp()} Egg facts!")
 
@@ -85,7 +104,13 @@ async def insult(ctx):
         await do_insult(response.resolved)
 
 
-@eggbot.command(aliases=["wizards"])
+# @eggbot.tree.command(name="wizard", description="Provides one (1) Wizard")
+# async def wizard(interaction: discord.interactions.Interaction):
+#     await interaction.response.send_message(f"```Wizard!\n{random.choice(wizards)}```")
+#     print(f"{timestamp()} Wizard!")
+
+
+@eggbot.command()
 async def wizard(ctx):
     await ctx.send(f"```Wizard!\n{random.choice(wizards)}```")
     print(f"{timestamp()} Wizard!")
@@ -119,13 +144,16 @@ async def ban(ctx, *args):
 
 
 if __name__ == "__main__":
-    cursor.execute(
-        """
-CREATE TABLE IF NOT EXISTS banned (
-    id integer PRIMARY KEY,
-    bans integer NOT NULL
-);
-        """
-    )
+    #     cursor.execute(
+    #         """
+    # CREATE TABLE IF NOT EXISTS banned (
+    #     id integer PRIMARY KEY,
+    #     bans integer NOT NULL
+    # );
+    #         """
+    #     )
 
-    eggbot.run(os.environ.get("DISCORD_API_KEY"))
+    token = os.environ.get("DISCORD_API_KEY")
+    if not token:
+        raise Exception("No API token found!")
+    eggbot.run(token)
