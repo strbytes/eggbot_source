@@ -1,5 +1,6 @@
 import os, random, sqlite3, hashlib
 from datetime import datetime
+import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -7,6 +8,10 @@ load_dotenv()
 
 db = sqlite3.connect("db.sqlite")
 cursor = db.cursor()
+
+intents = discord.Intents.default()
+intents.message_content = True
+eggbot = commands.Bot(command_prefix="!", intents=intents)
 
 
 def timestamp():
@@ -17,8 +22,6 @@ with open("eggfacts.txt") as f:
     egg_facts = [fact for fact in f.read().strip().split("\n")]
 with open("wizards.txt") as f:
     wizards = [wizard for wizard in f.read().split("\n\n")]
-
-eggbot = commands.Bot(command_prefix="!")
 
 
 @eggbot.event
