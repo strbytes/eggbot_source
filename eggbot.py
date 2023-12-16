@@ -1,4 +1,5 @@
 import os, random, sqlite3, hashlib
+from argparse import ArgumentParser
 from datetime import datetime
 import discord
 from discord.ext import commands
@@ -27,6 +28,10 @@ with open("wizards.txt") as f:
 @eggbot.event
 async def on_ready():
     print(f"{timestamp()} Logged on as {eggbot.user}!")
+    if args.sync:
+        await eggbot.tree.sync()
+        print("Commands synced")
+        await eggbot.close()
 
 
 @eggbot.event
@@ -119,13 +124,28 @@ async def ban(ctx, *args):
 
 
 if __name__ == "__main__":
-    cursor.execute(
-        """
-CREATE TABLE IF NOT EXISTS banned (
-    id integer PRIMARY KEY,
-    bans integer NOT NULL
-);
-        """
+    parser = ArgumentParser()
+    parser.add_argument("--sync", action="store_true", help="Sync slash commands")
+    parser.add_argument(
+        "--create-table",
+        action="store_true",
+        help="Create the db table if it doesn't exist",
     )
+    args = parser.parse_args()
 
-    eggbot.run(os.environ.get("DISCORD_API_KEY"))
+    if args.create_table:
+        cursor.execute(
+            """
+    CREATE TABLE IF NOT EXISTS banned (
+        id integer PRIMARY KEY,
+        bans integer NOT NULL
+    );
+            """
+        )
+        exit()
+
+    token = os.environ.get("DISCORD_API_KEY")
+    if token:
+        eggbot.run(token)
+    else:
+        print("No API key found!")
