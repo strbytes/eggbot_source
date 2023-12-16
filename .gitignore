@@ -3,3 +3,5 @@
 .direnv/
 taskell.md
 db.sqlite
+log
+pid
