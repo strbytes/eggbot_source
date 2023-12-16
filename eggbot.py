@@ -35,15 +35,16 @@ async def on_ready():
 
 
 @eggbot.event
-async def on_message(message):
+async def on_message(message: discord.Message):
     if message.author == eggbot.user:
         return
     if "egg" in message.content.lower():
         await message.add_reaction("🥚")
         print(f"{timestamp()} Egg reaction!")
     if random.random() < 0.005:
-        await do_insult(message)
-        print(f"{timestamp()} You're a word!")
+        insult = await make_insult(message)
+        await message.reply(insult)
+        print(f"{timestamp()} Random insult!")
     await eggbot.process_commands(message)
 
 
@@ -84,19 +85,26 @@ async def wizard(ctx: Context):
 
 @eggbot.hybrid_command()
 async def insult(ctx: Context, user: discord.User):
-    if response := ctx.message.reference:
-        await do_insult(response.resolved)
-        return
-
-    last_message_from_user = [
-        message async for message in ctx.channel.history() if message.author == user
-    ][0]
-    if last_message_from_user:
-        await do_insult(last_message_from_user)
-    else:
-        await ctx.send(
-            f"No recent messages from {user} found in this channel", ephemeral=True
-        )
+    # If this command is called as a response to a message, use that message as the input
+    if reference := ctx.message.reference:
+        if isinstance(reference.resolved, discord.Message):
+            insult = await make_insult(reference.resolved)
+            await ctx.send(insult, reference=reference)
+        else:
+            await ctx.send("Command failed: invalid message reference", ephemeral=True)
+    # Otherwise, get the last message from the user in the argument
+    elif user:
+        last_message_from_user = [
+            message async for message in ctx.channel.history() if message.author == user
+        ][0]
+        if last_message_from_user:
+            insult = await make_insult(last_message_from_user)
+            await ctx.send(insult, reference=last_message_from_user)
+        else:
+            await ctx.send(
+                f"No recent messages from {user} found in this channel", ephemeral=True
+            )
+    print(f"{timestamp()} Deliberate insult!")
 
 
 @eggbot.hybrid_command()
@@ -129,15 +137,14 @@ async def ban(ctx: Context, user: discord.User):
 ### Utility functions
 
 
-async def do_insult(message):
+async def make_insult(message: discord.Message):
     words = message.content.split()
     user = message.author
     longest = max(words, key=len)
     if longest[0].lower() in "aeiou":
-        await message.reply(f"You're an {longest.lower()}, @{user.display_name}!")
+        return f"You're an {longest.lower()} {user.mention}!"
     else:
-        await message.reply(f"You're a {longest.lower()}, @{user.display_name}!")
-    print(f"{timestamp()} You're a word!")
+        return f"You're a {longest.lower()} {user.mention}!"
 
 
 def timestamp():
