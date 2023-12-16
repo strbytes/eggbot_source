@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 from datetime import datetime
 import discord
 from discord.ext import commands
+from discord.ext.commands.context import Context
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -58,8 +59,8 @@ async def do_insult(message):
     print(f"{timestamp()} You're a word!")
 
 
-@eggbot.command(aliases=["kgs"])
-async def kg(ctx, lb):
+@eggbot.hybrid_command(aliases=["kgs"])
+async def kg(ctx: Context, lb: int):
     try:
         kg = round(float(lb) / 2.2046226218, 2)
         await ctx.send(f"{lb} pounds is equal to {kg} kilograms")
@@ -68,8 +69,8 @@ async def kg(ctx, lb):
     print(f"{timestamp()} lb -> kg")
 
 
-@eggbot.command(aliases=["lbs"])
-async def lb(ctx, kg):
+@eggbot.hybrid_command(aliases=["lbs"])
+async def lb(ctx: Context, kg: int):
     try:
         lb = round(float(kg) * 2.2046226218, 2)
         await ctx.send(f"{kg} kilograms is equal to {lb} pounds")
@@ -78,8 +79,8 @@ async def lb(ctx, kg):
     print(f"{timestamp()} kg -> lb")
 
 
-@eggbot.command(aliases=["facts"])
-async def fact(ctx):
+@eggbot.hybrid_command(aliases=["facts"])
+async def fact(ctx: Context):
     await ctx.send(random.choice(egg_facts))
     print(f"{timestamp()} Egg facts!")
 
@@ -90,8 +91,8 @@ async def insult(ctx):
         await do_insult(response.resolved)
 
 
-@eggbot.command(aliases=["wizards"])
-async def wizard(ctx):
+@eggbot.hybrid_command(aliases=["wizards"])
+async def wizard(ctx: Context):
     await ctx.send(f"```Wizard!\n{random.choice(wizards)}```")
     print(f"{timestamp()} Wizard!")
 
