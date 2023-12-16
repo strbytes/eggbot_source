@@ -108,15 +108,15 @@ async def wizard(ctx: Context):
     print(f"{timestamp()} Wizard!")
 
 
-@eggbot.command()
-async def ban(ctx, *args):
+@eggbot.hybrid_command()
+async def ban(ctx: Context, user: discord.User):
     to_ban = ctx.message.mentions
     if not to_ban:
-        to_ban.append(ctx.message.author)
+        to_ban.append(user or ctx.message.author)
 
-    for user in to_ban:
+    for _user in to_ban:
         # don't save real id, just hash it
-        id_hash = hashlib.sha1(str(user.id).encode())
+        id_hash = hashlib.sha1(str(_user.id).encode())
         # python's default hash called to produce a shorter number
         id = hash(id_hash.hexdigest())
 
@@ -129,7 +129,7 @@ async def ban(ctx, *args):
 
         db.commit()
         await ctx.send(
-            f"{user.display_name} has been banned! {user.display_name} has been banned {bans} time(s)."
+            f"{_user.display_name} has been banned! {_user.display_name} has been banned {bans} time(s)."
         )
 
     print(f"{timestamp()} Ban!")
