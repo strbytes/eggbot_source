@@ -85,10 +85,21 @@ async def fact(ctx: Context):
     print(f"{timestamp()} Egg facts!")
 
 
-@eggbot.command()
-async def insult(ctx):
+@eggbot.hybrid_command()
+async def insult(ctx: Context, user: discord.User):
     if response := ctx.message.reference:
         await do_insult(response.resolved)
+        return
+
+    last_message_from_user = [
+        message async for message in ctx.channel.history() if message.author == user
+    ][0]
+    if last_message_from_user:
+        await do_insult(last_message_from_user)
+    else:
+        await ctx.send(
+            f"No recent messages from {user} found in this channel", ephemeral=True
+        )
 
 
 @eggbot.hybrid_command(aliases=["wizards"])
