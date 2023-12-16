@@ -16,14 +16,13 @@ intents.message_content = True
 eggbot = commands.Bot(command_prefix="!", intents=intents)
 
 
-def timestamp():
-    return datetime.strftime(datetime.now(), "%m/%d/%Y %H:%M:%S")
-
-
 with open("eggfacts.txt") as f:
     egg_facts = [fact for fact in f.read().strip().split("\n")]
 with open("wizards.txt") as f:
     wizards = [wizard for wizard in f.read().split("\n\n")]
+
+
+### Event Listeners
 
 
 @eggbot.event
@@ -48,15 +47,7 @@ async def on_message(message):
     await eggbot.process_commands(message)
 
 
-async def do_insult(message):
-    words = message.content.split()
-    user = message.author
-    longest = max(words, key=len)
-    if longest[0].lower() in "aeiou":
-        await message.reply(f"You're an {longest.lower()}, @{user.display_name}!")
-    else:
-        await message.reply(f"You're a {longest.lower()}, @{user.display_name}!")
-    print(f"{timestamp()} You're a word!")
+### Command definitions
 
 
 @eggbot.hybrid_command(aliases=["kgs"])
@@ -85,6 +76,12 @@ async def fact(ctx: Context):
     print(f"{timestamp()} Egg facts!")
 
 
+@eggbot.hybrid_command(aliases=["wizards"])
+async def wizard(ctx: Context):
+    await ctx.send(f"```Wizard!\n{random.choice(wizards)}```")
+    print(f"{timestamp()} Wizard!")
+
+
 @eggbot.hybrid_command()
 async def insult(ctx: Context, user: discord.User):
     if response := ctx.message.reference:
@@ -100,12 +97,6 @@ async def insult(ctx: Context, user: discord.User):
         await ctx.send(
             f"No recent messages from {user} found in this channel", ephemeral=True
         )
-
-
-@eggbot.hybrid_command(aliases=["wizards"])
-async def wizard(ctx: Context):
-    await ctx.send(f"```Wizard!\n{random.choice(wizards)}```")
-    print(f"{timestamp()} Wizard!")
 
 
 @eggbot.hybrid_command()
@@ -133,6 +124,27 @@ async def ban(ctx: Context, user: discord.User):
         )
 
     print(f"{timestamp()} Ban!")
+
+
+### Utility functions
+
+
+async def do_insult(message):
+    words = message.content.split()
+    user = message.author
+    longest = max(words, key=len)
+    if longest[0].lower() in "aeiou":
+        await message.reply(f"You're an {longest.lower()}, @{user.display_name}!")
+    else:
+        await message.reply(f"You're a {longest.lower()}, @{user.display_name}!")
+    print(f"{timestamp()} You're a word!")
+
+
+def timestamp():
+    return datetime.strftime(datetime.now(), "%m/%d/%Y %H:%M:%S")
+
+
+### Execution
 
 
 if __name__ == "__main__":
