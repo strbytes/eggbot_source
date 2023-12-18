@@ -115,7 +115,9 @@ async def ban(ctx: Context, user: discord.User):
         with closing(db.cursor()) as cursor:
             for _user in to_ban:
                 # don't save real id, just hash it
-                id = hash(_user.id)
+                id_hash = hashlib.sha1(str(_user.id).encode())
+                # python's default hash called to produce a shorter number
+                id = hash(id_hash.hexdigest())
 
                 cursor.execute("SELECT bans FROM banned WHERE id = ?;", [str(id)])
                 bans = ban_data[0] + 1 if (ban_data := cursor.fetchone()) else 1
