@@ -20,6 +20,7 @@ jobs:
           script: |
             cd /home/eve/eggbot_source
             python3 -m venv .direnv
+            pip install -r requirements.txt
             git fetch origin main
             git reset --hard origin/main
             cat pid | xargs kill
