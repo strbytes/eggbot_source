@@ -108,8 +108,9 @@ async def insult(ctx: Context, user: discord.User):
 @eggbot.hybrid_command()
 async def ban(ctx: Context, user: discord.User):
     to_ban = ctx.message.mentions
+    to_ban.append(user)
     if not to_ban:
-        to_ban.append(user or ctx.message.author)
+        to_ban.append(ctx.message.author)
 
     with closing(sqlite3.connect("db.sqlite")) as db:
         with closing(db.cursor()) as cursor:
