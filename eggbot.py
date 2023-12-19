@@ -14,10 +14,10 @@ intents.message_content = True
 eggbot = commands.Bot(command_prefix="!", intents=intents)
 
 
-with open("eggfacts.txt") as f:
-    egg_facts = [fact for fact in f.read().strip().split("\n")]
-with open("wizards.txt") as f:
-    wizards = [wizard for wizard in f.read().split("\n\n")]
+with open("eggfacts.txt") as file:
+    egg_facts = [fact for fact in file.read().strip().split("\n")]
+with open("wizards.txt") as file:
+    wizards = [wizard for wizard in file.read().split("\n\n")]
 
 
 ### Event Listeners
@@ -67,6 +67,30 @@ async def lb(ctx: Context, kg: int):
     except:
         await ctx.send("Format is `!lb <kgs>`, where kgs is a valid number.")
     print(f"{timestamp()} kg -> lb")
+
+
+@eggbot.hybrid_command()
+async def c(ctx: Context, f: int):
+    try:
+        c = round((float(f) - 32) / (9 / 5), 2)
+        await ctx.send(f"{f} degrees fahrenheit is equal to {c} degrees celsius")
+    except:
+        await ctx.send(
+            "Format is `!c <degrees fahrenheit>`, where degrees fahrenheit is a valid number."
+        )
+    print(f"{timestamp()} f -> c")
+
+
+@eggbot.hybrid_command()
+async def f(ctx: Context, c: int):
+    try:
+        f = round(float(c) * (9 / 5) + 32, 2)
+        await ctx.send(f"{c} degrees celsius is equal to {f} degrees fahrenheit")
+    except:
+        await ctx.send(
+            "Format is `!f <degrees celsius>`, where <degrees celsius> is a valid number."
+        )
+    print(f"{timestamp()} c -> f")
 
 
 @eggbot.hybrid_command(aliases=["facts"])
