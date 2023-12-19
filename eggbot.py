@@ -1,6 +1,6 @@
 import os, random, sqlite3, hashlib
 from argparse import ArgumentParser
-from contextlib import closing
+from contextlib import closing, contextmanager
 from datetime import datetime
 import discord
 from discord.ext import commands
@@ -18,6 +18,14 @@ with open("eggfacts.txt") as file:
     egg_facts = [fact for fact in file.read().strip().split("\n")]
 with open("wizards.txt") as file:
     wizards = [wizard for wizard in file.read().split("\n\n")]
+
+
+@contextmanager
+def use_db():
+    with closing(sqlite3.connect("db.sqlite")) as db:
+        with closing(db.cursor()) as cursor:
+            yield cursor
+        db.commit()
 
 
 ### Event Listeners
@@ -136,25 +144,24 @@ async def ban(ctx: Context, user: discord.User):
     if not to_ban:
         to_ban.append(ctx.message.author)
 
-    with closing(sqlite3.connect("db.sqlite")) as db:
-        with closing(db.cursor()) as cursor:
-            for _user in to_ban:
-                # don't save real id, just hash it
-                id_hash = hashlib.sha1(str(_user.id).encode()).hexdigest()
-                # concatenate the output
-                id = str(int(id_hash, 16))[:10]
+    with use_db() as cursor:
+        for _user in to_ban:
+            # don't save real id, just hash it
+            id_hash = hashlib.sha1(str(_user.id).encode()).hexdigest()
+            # concatenate the output
+            id = str(int(id_hash, 16))[:10]
 
-                cursor.execute("SELECT bans FROM banned WHERE id = ?;", [str(id)])
-                bans = ban_data[0] + 1 if (ban_data := cursor.fetchone()) else 1
-                cursor.execute(
-                    """INSERT OR REPLACE INTO banned (id, bans) VALUES (?, ?);""",
-                    [str(id), str(bans)],
-                )
+            cursor.execute("SELECT bans FROM banned WHERE id = ?;", [str(id)])
+            bans = ban_data[0] + 1 if (ban_data := cursor.fetchone()) else 1
+            cursor.execute(
+                """INSERT OR REPLACE INTO banned (id, bans) VALUES (?, ?);""",
+                [str(id), str(bans)],
+            )
 
-                db.commit()
-                await ctx.send(
-                    f"{_user.display_name} has been banned! {_user.display_name} has been banned {bans} time(s)."
-                )
+            db.commit()
+            await ctx.send(
+                f"{_user.display_name} has been banned! {_user.display_name} has been banned {bans} time(s)."
+            )
 
     print(f"{timestamp()} Ban!")
 
@@ -190,16 +197,15 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.create_table:
-        with closing(sqlite3.connect("db.sqlite")) as db:
-            with closing(db.cursor()) as cursor:
-                cursor.execute(
-                    """
-            CREATE TABLE IF NOT EXISTS banned (
-                id integer PRIMARY KEY,
-                bans integer NOT NULL
-            );
-                    """
-                )
+        with use_db() as cursor:
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS banned (
+                    id integer PRIMARY KEY,
+                    bans integer NOT NULL
+                );
+                        """
+            )
         exit()
 
     token = os.environ.get("DISCORD_API_KEY")
