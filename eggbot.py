@@ -139,29 +139,22 @@ async def insult(ctx: Context, user: discord.User):
 
 @eggbot.hybrid_command()
 async def ban(ctx: Context, user: discord.User):
-    to_ban = ctx.message.mentions
-    to_ban.append(user)
-    if not to_ban:
-        to_ban.append(ctx.message.author)
-
     with use_db() as cursor:
-        for _user in to_ban:
-            # don't save real id, just hash it
-            id_hash = hashlib.sha1(str(_user.id).encode()).hexdigest()
-            # concatenate the output
-            id = str(int(id_hash, 16))[:10]
+        # don't save real id, just hash it
+        id_hash = hashlib.sha1(str(user.id).encode()).hexdigest()
+        # concatenate the output
+        id = str(int(id_hash, 16))[:10]
 
-            cursor.execute("SELECT bans FROM banned WHERE id = ?;", [str(id)])
-            bans = ban_data[0] + 1 if (ban_data := cursor.fetchone()) else 1
-            cursor.execute(
-                """INSERT OR REPLACE INTO banned (id, bans) VALUES (?, ?);""",
-                [str(id), str(bans)],
-            )
+        cursor.execute("SELECT bans FROM banned WHERE id = ?;", [str(id)])
+        bans = ban_data[0] + 1 if (ban_data := cursor.fetchone()) else 1
+        cursor.execute(
+            """INSERT OR REPLACE INTO banned (id, bans) VALUES (?, ?);""",
+            [str(id), str(bans)],
+        )
 
-            db.commit()
-            await ctx.send(
-                f"{_user.display_name} has been banned! {_user.display_name} has been banned {bans} time(s)."
-            )
+        await ctx.send(
+            f"{user.display_name} has been banned! {user.display_name} has been banned {bans} time(s)."
+        )
 
     print(f"{timestamp()} Ban!")
 
