@@ -153,7 +153,7 @@ async def ban(ctx: Context, user: discord.User):
         )
 
         await ctx.send(
-            f"{user.display_name} has been banned! {user.display_name} has been banned {bans} time(s)."
+            f"{user.mention} has been banned! {user.display_name} has been banned {bans} time(s)."
         )
 
     print(f"{timestamp()} Ban!")
