@@ -11,6 +11,7 @@ load_dotenv()
 
 intents = discord.Intents.default()
 intents.message_content = True
+intents.members = True
 eggbot = commands.Bot(command_prefix="!", intents=intents)
 
 
@@ -157,6 +158,14 @@ async def ban(ctx: Context, user: discord.User):
         )
 
     print(f"{timestamp()} Ban!")
+
+@eggbot.hybrid_command()
+async def ban_leaderboard(ctx: Context, user: discord.User):
+    members = await ctx.guild.fetch_members()
+    # TODO make dict of member_hash: member
+    with use_db() as cursor:
+        # TODO use hash:member dict to query the db and match users to bancount
+        cursor.execute("SELECT bans FROM banned WHERE ___;")
 
 
 ### Utility functions
