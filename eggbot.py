@@ -159,6 +159,18 @@ async def ban(ctx: Context, user: discord.User):
     print(f"{timestamp()} Ban!")
 
 
+### Context menu commands
+
+
+@eggbot.tree.context_menu(name="Insult poster")
+async def insult_from_context_menu(
+    interaction: discord.Interaction, message: discord.Message
+):
+    insult = await make_insult(message)
+    await message.reply(insult)
+    await interaction.response.send_message("Poster insulted!", ephemeral=True)
+
+
 ### Utility functions
 
 
