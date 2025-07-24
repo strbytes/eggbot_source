@@ -159,6 +159,7 @@ async def ban_from_context_menu(
         f"{message.author.mention} has been banned! {message.author.display_name} has been banned {bans} time(s)."
     )
     await interaction.response.send_message("Poster banned!", ephemeral=True)
+    await interaction.delete_original_response()
 
 
 ### Utility functions
