@@ -160,6 +160,7 @@ async def insult_from_context_menu(
     insult = await make_insult(message)
     await message.reply(insult)
     await interaction.response.send_message("Poster insulted!", ephemeral=True)
+    await interaction.delete_original_response()
 
 
 ### Utility functions
