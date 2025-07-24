@@ -115,25 +115,16 @@ async def wizard(ctx: Context):
 
 @eggbot.hybrid_command()
 async def insult(ctx: Context, user: discord.User):
-    # If this command is called as a response to a message, use that message as the input
-    if reference := ctx.message.reference:
-        if isinstance(reference.resolved, discord.Message):
-            insult = await make_insult(reference.resolved)
-            await ctx.send(insult, reference=reference)
-        else:
-            await ctx.send("Command failed: invalid message reference", ephemeral=True)
-    # Otherwise, get the last message from the user in the argument
-    elif user:
-        last_message_from_user = [
-            message async for message in ctx.channel.history() if message.author == user
-        ][0]
-        if last_message_from_user:
-            insult = await make_insult(last_message_from_user)
-            await ctx.send(insult, reference=last_message_from_user)
-        else:
-            await ctx.send(
-                f"No recent messages from {user} found in this channel", ephemeral=True
-            )
+    last_message_from_user = [
+        message async for message in ctx.channel.history() if message.author == user
+    ][0]
+    if last_message_from_user:
+        insult = await make_insult(last_message_from_user)
+        await ctx.send(insult, reference=last_message_from_user)
+    else:
+        await ctx.send(
+            f"No recent messages from {user} found in this channel", ephemeral=True
+        )
     print(f"{timestamp()} Deliberate insult!")
 
 
