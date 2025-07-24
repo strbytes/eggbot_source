@@ -165,7 +165,7 @@ async def insult_from_context_menu(
 ### Utility functions
 
 
-async def make_insult(message: discord.Message):
+async def make_insult(message: discord.Message) -> str:
     words = message.content.split()
     user = message.author
     longest = max(words, key=len)
@@ -175,7 +175,7 @@ async def make_insult(message: discord.Message):
         return f"You're a {longest.lower()} {user.mention}!"
 
 
-def timestamp():
+def timestamp() -> str:
     return datetime.strftime(datetime.now(), "%m/%d/%Y %H:%M:%S")
 
 
