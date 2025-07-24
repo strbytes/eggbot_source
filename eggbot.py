@@ -130,23 +130,10 @@ async def insult(ctx: Context, user: discord.User):
 
 @eggbot.hybrid_command()
 async def ban(ctx: Context, user: discord.User):
-    with use_db() as cursor:
-        # don't save real id, just hash it
-        id_hash = hashlib.sha1(str(user.id).encode()).hexdigest()
-        # concatenate the output
-        id = str(int(id_hash, 16))[:10]
-
-        cursor.execute("SELECT bans FROM banned WHERE id = ?;", [str(id)])
-        bans = ban_data[0] + 1 if (ban_data := cursor.fetchone()) else 1
-        cursor.execute(
-            """INSERT OR REPLACE INTO banned (id, bans) VALUES (?, ?);""",
-            [str(id), str(bans)],
-        )
-
-        await ctx.send(
-            f"{user.mention} has been banned! {user.display_name} has been banned {bans} time(s)."
-        )
-
+    bans = await do_ban(user)
+    await ctx.send(
+        f"{user.mention} has been banned! {user.display_name} has been banned {bans} time(s)."
+    )
     print(f"{timestamp()} Ban!")
 
 
@@ -165,7 +152,28 @@ async def insult_from_context_menu(
 ### Utility functions
 
 
-async def make_insult(message: discord.Message):
+async def do_ban(user: discord.User):
+    # Generate an anonymized hash of user's ID to avoid storing discord IDs
+    id = hash_id(user)
+
+    with use_db() as cursor:
+        cursor.execute("SELECT bans FROM banned WHERE id = ?;", [str(id)])
+        bans = ban_data[0] + 1 if (ban_data := cursor.fetchone()) else 1
+        cursor.execute(
+            """INSERT OR REPLACE INTO banned (id, bans) VALUES (?, ?);""",
+            [str(id), str(bans)],
+        )
+    return bans
+
+
+def hash_id(user: discord.User) -> str:
+    """Create an anonymized hash of a user's ID"""
+    id_hash = hashlib.sha1(str(user.id).encode()).hexdigest()
+    # concatenate the output
+    return str(int(id_hash, 16))[:10]
+
+
+async def make_insult(message: discord.Message) -> str:
     words = message.content.split()
     user = message.author
     longest = max(words, key=len)
@@ -175,7 +183,7 @@ async def make_insult(message: discord.Message):
         return f"You're a {longest.lower()} {user.mention}!"
 
 
-def timestamp():
+def timestamp() -> str:
     return datetime.strftime(datetime.now(), "%m/%d/%Y %H:%M:%S")
 
 
