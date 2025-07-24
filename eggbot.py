@@ -149,10 +149,21 @@ async def insult_from_context_menu(
     await interaction.response.send_message("Poster insulted!", ephemeral=True)
 
 
+@eggbot.tree.context_menu(name="Ban poster")
+async def ban_from_context_menu(
+    interaction: discord.Interaction, message: discord.Message
+):
+    bans = await do_ban(message.author)
+    await message.reply(
+        f"{message.author.mention} has been banned! {message.author.display_name} has been banned {bans} time(s)."
+    )
+    await interaction.response.send_message("Poster banned!", ephemeral=True)
+
+
 ### Utility functions
 
 
-async def do_ban(user: discord.User):
+async def do_ban(user: discord.User | discord.Member):
     # Generate an anonymized hash of user's ID to avoid storing discord IDs
     id = hash_id(user)
 
@@ -166,7 +177,7 @@ async def do_ban(user: discord.User):
     return bans
 
 
-def hash_id(user: discord.User) -> str:
+def hash_id(user: discord.User | discord.Member) -> str:
     """Create an anonymized hash of a user's ID"""
     id_hash = hashlib.sha1(str(user.id).encode()).hexdigest()
     # concatenate the output
