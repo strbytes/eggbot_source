@@ -11,6 +11,7 @@ load_dotenv()
 
 intents = discord.Intents.default()
 intents.message_content = True
+intents.members = True
 eggbot = commands.Bot(command_prefix="!", intents=intents)
 
 
@@ -135,6 +136,25 @@ async def ban(ctx: Context, user: discord.User):
         f"{user.mention} has been banned! {user.display_name} has been banned {bans} time(s)."
     )
     print(f"{timestamp()} Ban!")
+
+
+@eggbot.hybrid_command()
+async def ban_leaderboard(ctx: Context):
+    assert ctx.guild
+    members = {
+        hash_id(member._user): member async for member in ctx.guild.fetch_members()
+    }
+    leaderboard = "Users with the most bans in the server:\n"
+
+    with use_db() as cursor:
+        for id, bans in cursor.execute(
+            "SELECT id, bans FROM banned ORDER BY bans DESC LIMIT 5;"
+        ).fetchall():
+            if str(id) in members:
+                member = members[str(id)]
+                leaderboard += f"{member.nick}: {bans}\n"
+
+    await ctx.reply(leaderboard)
 
 
 ### Context menu commands
