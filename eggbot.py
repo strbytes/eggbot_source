@@ -155,6 +155,7 @@ async def ban_leaderboard(ctx: Context):
                 leaderboard += f"{member.nick}: {bans}\n"
 
     await ctx.reply(leaderboard)
+    print(f"{timestamp()} Ban!")
 
 
 ### Context menu commands
@@ -168,6 +169,7 @@ async def insult_from_context_menu(
     await message.reply(insult)
     await interaction.response.send_message("Poster insulted!", ephemeral=True)
     await interaction.delete_original_response()
+    print(f"{timestamp()} Insult from context menu!")
 
 
 @eggbot.tree.context_menu(name="Ban poster")
@@ -180,6 +182,7 @@ async def ban_from_context_menu(
     )
     await interaction.response.send_message("Poster banned!", ephemeral=True)
     await interaction.delete_original_response()
+    print(f"{timestamp()} Ban from context menu!")
 
 
 ### Utility functions
